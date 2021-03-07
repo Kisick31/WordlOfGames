@@ -24,5 +24,6 @@
     <string name="developer_not_specified">Разработчик не указан</string>
     <string name="unknown">Неизвестно</string>
     <string name="play_icon">play icon</string>
+    <string name="remove_from_favourite">Из избранного</string>
 
 </resources>

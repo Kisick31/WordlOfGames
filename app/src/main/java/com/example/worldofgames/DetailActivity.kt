@@ -95,9 +95,9 @@ class DetailActivity : AppCompatActivity(),
     private fun setFavourite() {
         favouriteGame = viewModel.getFavouriteGameById(gameId)
         if (favouriteGame == null) {
-            button.text = "В избранное"
+            button.text = getString(R.string.add_to_favourite)
         } else {
-            button.text = "Из избранного"
+            button.text = getString(R.string.remove_from_favourite)
         }
     }
 

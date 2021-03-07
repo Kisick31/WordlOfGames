@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">World of Games</string>
+    <string name="poster_of_game">Постер к игре</string>
+    <string name="cover_of_game">Cover of game</string>
+    <string name="genres">Жанр:</string>
+    <string name="release_date">Дата релиза:</string>
+    <string name="add_to_favourite">В избранное</string>
+    <string name="age_rating">Возрастной рейтинг:</string>
+    <string name="item_main">Главная</string>
+    <string name="item_favourite">Избранное</string>
+    <string name="pegi_three">Для детей младшего возраста</string>
+    <string name="mature">Для взрослых от 17 лет и старше</string>
+    <string name="pegi_seven">Для всех от 7 лет и старше</string>
+    <string name="pegi_twelve">Для всех от 12 лет и старше</string>
+    <string name="pegi_sixteen">Для всех от 16 лет и старше</string>
+    <string name="pegi_eighteen">Для взрослых от 18 лет и старше</string>
+    <string name="rating_exepted">Рейтинг ожидается</string>
+    <string name="early_childhood">Для детей младшего возраста</string>
+    <string name="everyone">Для всех от 6 лет и старше</string>
+    <string name="everyone_10_and_older">Для всех от 10 лет и старше</string>
+    <string name="teen">Для всех от 13 лет и старше</string>
+    <string name="adults_only_18">Для взрослых от 18 лет и старше</string>
+    <string name="rating_not_specified">Рейтинг не указан</string>
+    <string name="developer_not_specified">Разработчик не указан</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="play_icon">play icon</string>
+
+</resources>

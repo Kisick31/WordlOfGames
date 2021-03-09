@@ -6,6 +6,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
 import android.os.AsyncTask
+import android.os.Bundle
+import androidx.loader.content.AsyncTaskLoader
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -98,6 +100,64 @@ class NetworkUtils {
             }
         }
 
+        class JSONGamesLoader(context: Context) : AsyncTaskLoader<JSONArray>(context) {
+            override fun loadInBackground(): JSONArray {
+                val urlConnection: HttpURLConnection
+                val builder = StringBuilder()
+                try {
+                    urlConnection = V4_GAMES_URL.openConnection() as HttpURLConnection
+                    urlConnection.requestMethod = "POST"
+                    urlConnection.setRequestProperty("Client-ID", CLIENT_ID)
+                    urlConnection.setRequestProperty(
+                        "Authorization",
+                        "Bearer toytxz5vr5ezf3lgrdjvpap5hnrc3e"
+                    )
+                    urlConnection.setRequestProperty("Accept", "application/json")
+
+                    urlConnection.doOutput = true
+                    val os: OutputStream = urlConnection.outputStream
+                    val osw = OutputStreamWriter(os, "UTF-8")
+                    osw.write(
+                        "fields name, " +
+                                "cover.image_id, " +
+                                "screenshots.image_id, " +
+                                "genres.name, " +
+                                "age_ratings.rating, " +
+                                "rating, " +
+                                "involved_companies.company.name, " +
+                                "involved_companies.developer, " +
+                                "release_dates.human, " +
+                                "platforms.name, " +
+                                "summary;" +
+                                "sort rating desc;" +
+                                "where rating != null & rating_count>70 & version_parent = null & parent_game = null;" +
+                                "l 100;"
+                    )
+                    osw.flush()
+                    osw.close()
+
+                    val inputStream = urlConnection.inputStream
+                    val inputStreamReader = InputStreamReader(inputStream)
+                    val reader = BufferedReader(inputStreamReader)
+                    var line = reader.readLine()
+                    while (line != null) {
+                        builder.append(line)
+                        line = reader.readLine()
+                    }
+                } catch (e: IOException) {
+
+                } catch (e: JSONException) {
+
+                }
+                return JSONArray(builder.toString())
+            }
+
+            override fun onStartLoading() {
+                super.onStartLoading()
+                forceLoad()
+            }
+        }
+
         fun getVideosOfTheGame(gameId: Int): JSONArray {
             return JSONVideoLoadTask().execute(gameId).get()
         }
@@ -137,6 +197,50 @@ class NetworkUtils {
 
                 }
                 return JSONArray(builder.toString())
+            }
+        }
+
+        class JSONVideoLoader(context: Context, private val bundle: Bundle) : AsyncTaskLoader<JSONArray>(context) {
+            override fun loadInBackground(): JSONArray {
+                val gameId = bundle.getString("gameId")
+                val urlConnection: HttpURLConnection
+                val builder = StringBuilder()
+                try {
+                    urlConnection = V4_VIDEOS_URL.openConnection() as HttpURLConnection
+                    urlConnection.requestMethod = "POST"
+                    urlConnection.setRequestProperty("Client-ID", CLIENT_ID)
+                    urlConnection.setRequestProperty(
+                        "Authorization",
+                        "Bearer toytxz5vr5ezf3lgrdjvpap5hnrc3e"
+                    )
+                    urlConnection.setRequestProperty("Accept", "application/json")
+
+                    urlConnection.doOutput = true
+                    val os: OutputStream = urlConnection.outputStream
+                    val osw = OutputStreamWriter(os, "UTF-8")
+                    osw.write("fields name, video_id; where game = ${gameId};")
+                    osw.flush()
+                    osw.close()
+
+                    val inputStream = urlConnection.inputStream
+                    val inputStreamReader = InputStreamReader(inputStream)
+                    val reader = BufferedReader(inputStreamReader)
+                    var line = reader.readLine()
+                    while (line != null) {
+                        builder.append(line)
+                        line = reader.readLine()
+                    }
+                } catch (e: IOException) {
+
+                } catch (e: JSONException) {
+
+                }
+                return JSONArray(builder.toString())
+            }
+
+            override fun onStartLoading() {
+                super.onStartLoading()
+                forceLoad()
             }
         }
 

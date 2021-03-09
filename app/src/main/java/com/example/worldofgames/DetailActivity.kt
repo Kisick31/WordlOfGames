@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldofgames.adapters.VideoAdapter
 import com.example.worldofgames.data.FavouriteGame
@@ -18,21 +20,28 @@ import com.example.worldofgames.utils.JSONUtils
 import com.example.worldofgames.utils.NetworkUtils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
+import org.json.JSONArray
 
 
 class DetailActivity : AppCompatActivity(),
-    VideoAdapter.OnPlayClickListener {
+    VideoAdapter.OnPlayClickListener, LoaderManager.LoaderCallbacks<JSONArray> {
 
     private lateinit var videoAdapter: VideoAdapter
     private lateinit var viewModel: MainViewModel
     private var gameId: Int = 0
     private var game: Game? = null
     private var favouriteGame: FavouriteGame? = null
+    private lateinit var loaderManager: LoaderManager
+
+    companion object{
+        private const val LOADER_ID = 3123
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
+        loaderManager = LoaderManager.getInstance(this)
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
             .create(MainViewModel::class.java)
 
@@ -55,11 +64,7 @@ class DetailActivity : AppCompatActivity(),
         videoAdapter = VideoAdapter(this)
         recyclerViewVideos.layoutManager = LinearLayoutManager(this)
         recyclerViewVideos.adapter = videoAdapter
-        if (NetworkUtils.hasConnection(this)) {
-            val jsonArrayVideos = NetworkUtils.getVideosOfTheGame(gameId)
-            val videos = JSONUtils.getVideosFromJSON(jsonArrayVideos)
-            videoAdapter.videos = videos
-        }
+        downloadVideos()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -82,7 +87,6 @@ class DetailActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-
     fun onClickAddToFavourite(view: View?) {
         if (favouriteGame == null) {
             viewModel.insertFavouriteGame(FavouriteGame(game!!))
@@ -104,5 +108,30 @@ class DetailActivity : AppCompatActivity(),
     override fun onPlayClick(url: String) {
         val intentToVideo = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intentToVideo)
+    }
+
+    private fun downloadVideos(){
+        val args = Bundle()
+        args.putInt("gameId", gameId)
+        loaderManager.restartLoader(LOADER_ID, args, this)
+    }
+
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<JSONArray> {
+        return if (args!=null) {
+            NetworkUtils.Companion.JSONVideoLoader(this, args)
+        } else Loader<JSONArray>(this)
+    }
+
+    override fun onLoadFinished(loader: Loader<JSONArray>, data: JSONArray) {
+        if (NetworkUtils.hasConnection(this)) {
+            val jsonArrayVideos = NetworkUtils.getVideosOfTheGame(gameId)
+            val videos = JSONUtils.getVideosFromJSON(jsonArrayVideos)
+            videoAdapter.videos = videos
+            loaderManager.destroyLoader(LOADER_ID)
+        }
+    }
+
+    override fun onLoaderReset(loader: Loader<JSONArray>) {
+
     }
 }

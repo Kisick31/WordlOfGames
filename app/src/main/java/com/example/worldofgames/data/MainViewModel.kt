@@ -32,12 +32,12 @@ class   MainViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
 
-        private class GetGameTask : AsyncTask<Int, Void, Game?>() {
-            override fun doInBackground(vararg params: Int?): Game? {
+        private class GetGameTask : AsyncTask<Int, Void, Game>() {
+            override fun doInBackground(vararg params: Int?): Game {
                 if(params.isNotEmpty()){
-                    return params[0]?.let { database.gamesDao().getGameById(it) }
+                    return database.gamesDao().getGameById(params[0])
                 }
-                return null
+                return database.gamesDao().getGameById(1942)
             }
         }
 
@@ -90,7 +90,7 @@ class   MainViewModel(application: Application) : AndroidViewModel(application) 
         DeleteGameTask().execute(game)
     }
 
-    fun getGameById(id: Int): Game? {
+    fun getGameById(id: Int): Game {
         return GetGameTask().execute(id).get()
     }
 

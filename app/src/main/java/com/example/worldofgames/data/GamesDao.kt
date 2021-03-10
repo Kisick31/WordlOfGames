@@ -15,7 +15,7 @@ interface GamesDao {
     fun getAllGames() : LiveData<List<Game>>
 
     @Query("SELECT * FROM game WHERE id == :gameId")
-    fun getGameById(gameId: Int): Game
+    fun getGameById(gameId: Int?): Game
 
     @Query("DELETE FROM game")
     fun deleteAllGames()

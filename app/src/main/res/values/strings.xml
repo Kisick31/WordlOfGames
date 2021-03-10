@@ -25,5 +25,9 @@
     <string name="unknown">Неизвестно</string>
     <string name="play_icon">play icon</string>
     <string name="remove_from_favourite">Из избранного</string>
+    <string name="top_100">TOP 100</string>
+    <string name="favorite">Favorite</string>
+    <string name="settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

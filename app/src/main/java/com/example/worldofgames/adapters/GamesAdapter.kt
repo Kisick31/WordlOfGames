@@ -45,6 +45,8 @@ class GamesAdapter(private var listener: OnCoverClickListener) : RecyclerView.Ad
         }
     }
 
+
+
     interface OnCoverClickListener{
         fun onCoverClick(position: Int, game: Game)
     }

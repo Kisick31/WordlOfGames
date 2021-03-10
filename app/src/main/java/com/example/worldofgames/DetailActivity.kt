@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.loader.app.LoaderManager
-import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldofgames.adapters.VideoAdapter
 import com.example.worldofgames.data.FavouriteGame
@@ -20,11 +18,10 @@ import com.example.worldofgames.utils.JSONUtils
 import com.example.worldofgames.utils.NetworkUtils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
-import org.json.JSONArray
 
 
 class DetailActivity : AppCompatActivity(),
-    VideoAdapter.OnPlayClickListener, LoaderManager.LoaderCallbacks<JSONArray> {
+    VideoAdapter.OnPlayClickListener {
 
     private lateinit var videoAdapter: VideoAdapter
     private lateinit var viewModel: MainViewModel
@@ -33,9 +30,6 @@ class DetailActivity : AppCompatActivity(),
     private var favouriteGame: FavouriteGame? = null
     private lateinit var loaderManager: LoaderManager
 
-    companion object{
-        private const val LOADER_ID = 3123
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +58,12 @@ class DetailActivity : AppCompatActivity(),
         videoAdapter = VideoAdapter(this)
         recyclerViewVideos.layoutManager = LinearLayoutManager(this)
         recyclerViewVideos.adapter = videoAdapter
-        downloadVideos()
+
+        if (NetworkUtils.hasConnection(this)) {
+            val jsonVideosArray = NetworkUtils.getVideosOfTheGame(gameId)
+            val videos = JSONUtils.getVideosFromJSON(jsonVideosArray)
+            videoAdapter.videos = videos
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -74,7 +73,7 @@ class DetailActivity : AppCompatActivity(),
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.itemMain -> {
                 val intentToMainActivity = Intent(this, MainActivity::class.java)
                 startActivity(intentToMainActivity)
@@ -108,30 +107,5 @@ class DetailActivity : AppCompatActivity(),
     override fun onPlayClick(url: String) {
         val intentToVideo = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intentToVideo)
-    }
-
-    private fun downloadVideos(){
-        val args = Bundle()
-        args.putInt("gameId", gameId)
-        loaderManager.restartLoader(LOADER_ID, args, this)
-    }
-
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<JSONArray> {
-        return if (args!=null) {
-            NetworkUtils.Companion.JSONVideoLoader(this, args)
-        } else Loader<JSONArray>(this)
-    }
-
-    override fun onLoadFinished(loader: Loader<JSONArray>, data: JSONArray) {
-        if (NetworkUtils.hasConnection(this)) {
-            val jsonArrayVideos = NetworkUtils.getVideosOfTheGame(gameId)
-            val videos = JSONUtils.getVideosFromJSON(jsonArrayVideos)
-            videoAdapter.videos = videos
-            loaderManager.destroyLoader(LOADER_ID)
-        }
-    }
-
-    override fun onLoaderReset(loader: Loader<JSONArray>) {
-
     }
 }

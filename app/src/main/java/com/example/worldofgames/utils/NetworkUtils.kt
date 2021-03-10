@@ -5,9 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
-import android.os.AsyncTask
-import android.os.Bundle
-import androidx.loader.content.AsyncTaskLoader
+import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -44,242 +42,160 @@ class NetworkUtils {
         }
 
         fun getGamesFromTwitch(): JSONArray {
-            return JSONGamesLoadTask().execute().get()
+            var jsonArray = JSONArray()
+            runBlocking {
+                val job = GlobalScope.launch(Dispatchers.IO) {
+                    val result = async { getGamesFromTwitchJSONArray() }
+                    jsonArray = result.await()
+                }
+                job.join()
+            }
+            return jsonArray
         }
 
-        private class JSONGamesLoadTask : AsyncTask<Void, Void, JSONArray>() {
-            override fun doInBackground(vararg params: Void?): JSONArray {
-                val urlConnection: HttpURLConnection
-                val builder = StringBuilder()
-                try {
-                    urlConnection = V4_GAMES_URL.openConnection() as HttpURLConnection
-                    urlConnection.requestMethod = "POST"
-                    urlConnection.setRequestProperty("Client-ID", CLIENT_ID)
-                    urlConnection.setRequestProperty(
-                        "Authorization",
-                        "Bearer toytxz5vr5ezf3lgrdjvpap5hnrc3e"
-                    )
-                    urlConnection.setRequestProperty("Accept", "application/json")
+        private fun getGamesFromTwitchJSONArray(): JSONArray {
+            val urlConnection: HttpURLConnection
+            val builder = StringBuilder()
+            try {
+                urlConnection = V4_GAMES_URL.openConnection() as HttpURLConnection
+                urlConnection.requestMethod = "POST"
+                urlConnection.setRequestProperty("Client-ID", CLIENT_ID)
+                urlConnection.setRequestProperty(
+                    "Authorization",
+                    "Bearer toytxz5vr5ezf3lgrdjvpap5hnrc3e"
+                )
+                urlConnection.setRequestProperty("Accept", "application/json")
 
-                    urlConnection.doOutput = true
-                    val os: OutputStream = urlConnection.outputStream
-                    val osw = OutputStreamWriter(os, "UTF-8")
-                    osw.write(
-                        "fields name, " +
-                                "cover.image_id, " +
-                                "screenshots.image_id, " +
-                                "genres.name, " +
-                                "age_ratings.rating, " +
-                                "rating, " +
-                                "involved_companies.company.name, " +
-                                "involved_companies.developer, " +
-                                "release_dates.human, " +
-                                "platforms.name, " +
-                                "summary;" +
-                                "sort rating desc;" +
-                                "where rating != null & rating_count>70 & version_parent = null & parent_game = null;" +
-                                "l 100;"
-                    )
-                    osw.flush()
-                    osw.close()
+                urlConnection.doOutput = true
+                val os: OutputStream = urlConnection.outputStream
+                val osw = OutputStreamWriter(os, "UTF-8")
+                osw.write(
+                    "fields name, " +
+                            "cover.image_id, " +
+                            "screenshots.image_id, " +
+                            "genres.name, " +
+                            "age_ratings.rating, " +
+                            "rating, " +
+                            "involved_companies.company.name, " +
+                            "involved_companies.developer, " +
+                            "release_dates.human, " +
+                            "platforms.name, " +
+                            "summary;" +
+                            "sort rating desc;" +
+                            "where rating != null & rating_count>70 & version_parent = null & parent_game = null;" +
+                            "l 100;"
+                )
+                osw.flush()
+                osw.close()
 
-                    val inputStream = urlConnection.inputStream
-                    val inputStreamReader = InputStreamReader(inputStream)
-                    val reader = BufferedReader(inputStreamReader)
-                    var line = reader.readLine()
-                    while (line != null) {
-                        builder.append(line)
-                        line = reader.readLine()
-                    }
-                } catch (e: IOException) {
-
-                } catch (e: JSONException) {
-
+                val inputStream = urlConnection.inputStream
+                val inputStreamReader = InputStreamReader(inputStream)
+                val reader = BufferedReader(inputStreamReader)
+                var line = reader.readLine()
+                while (line != null) {
+                    builder.append(line)
+                    line = reader.readLine()
                 }
-                return JSONArray(builder.toString())
+            } catch (e: IOException) {
+
+            } catch (e: JSONException) {
+
             }
-        }
+            return JSONArray(builder.toString())
 
-        class JSONGamesLoader(context: Context) : AsyncTaskLoader<JSONArray>(context) {
-            override fun loadInBackground(): JSONArray {
-                val urlConnection: HttpURLConnection
-                val builder = StringBuilder()
-                try {
-                    urlConnection = V4_GAMES_URL.openConnection() as HttpURLConnection
-                    urlConnection.requestMethod = "POST"
-                    urlConnection.setRequestProperty("Client-ID", CLIENT_ID)
-                    urlConnection.setRequestProperty(
-                        "Authorization",
-                        "Bearer toytxz5vr5ezf3lgrdjvpap5hnrc3e"
-                    )
-                    urlConnection.setRequestProperty("Accept", "application/json")
-
-                    urlConnection.doOutput = true
-                    val os: OutputStream = urlConnection.outputStream
-                    val osw = OutputStreamWriter(os, "UTF-8")
-                    osw.write(
-                        "fields name, " +
-                                "cover.image_id, " +
-                                "screenshots.image_id, " +
-                                "genres.name, " +
-                                "age_ratings.rating, " +
-                                "rating, " +
-                                "involved_companies.company.name, " +
-                                "involved_companies.developer, " +
-                                "release_dates.human, " +
-                                "platforms.name, " +
-                                "summary;" +
-                                "sort rating desc;" +
-                                "where rating != null & rating_count>70 & version_parent = null & parent_game = null;" +
-                                "l 100;"
-                    )
-                    osw.flush()
-                    osw.close()
-
-                    val inputStream = urlConnection.inputStream
-                    val inputStreamReader = InputStreamReader(inputStream)
-                    val reader = BufferedReader(inputStreamReader)
-                    var line = reader.readLine()
-                    while (line != null) {
-                        builder.append(line)
-                        line = reader.readLine()
-                    }
-                } catch (e: IOException) {
-
-                } catch (e: JSONException) {
-
-                }
-                return JSONArray(builder.toString())
-            }
-
-            override fun onStartLoading() {
-                super.onStartLoading()
-                forceLoad()
-            }
         }
 
         fun getVideosOfTheGame(gameId: Int): JSONArray {
-            return JSONVideoLoadTask().execute(gameId).get()
+            var jsonArray = JSONArray()
+            runBlocking {
+                val job = GlobalScope.launch(Dispatchers.IO) {
+                    val result = async { getVideosJSONArray(gameId) }
+                    jsonArray = result.await()
+                }
+                job.join()
+            }
+            return jsonArray
         }
 
-        private class JSONVideoLoadTask : AsyncTask<Int, Void, JSONArray>() {
-            override fun doInBackground(vararg params: Int?): JSONArray {
-                val urlConnection: HttpURLConnection
-                val builder = StringBuilder()
-                try {
-                    urlConnection = V4_VIDEOS_URL.openConnection() as HttpURLConnection
-                    urlConnection.requestMethod = "POST"
-                    urlConnection.setRequestProperty("Client-ID", CLIENT_ID)
-                    urlConnection.setRequestProperty(
-                        "Authorization",
-                        "Bearer toytxz5vr5ezf3lgrdjvpap5hnrc3e"
-                    )
-                    urlConnection.setRequestProperty("Accept", "application/json")
+        private fun getVideosJSONArray(gameId: Int): JSONArray {
+            val urlConnection: HttpURLConnection
+            val builder = StringBuilder()
+            try {
+                urlConnection = V4_VIDEOS_URL.openConnection() as HttpURLConnection
+                urlConnection.requestMethod = "POST"
+                urlConnection.setRequestProperty("Client-ID", CLIENT_ID)
+                urlConnection.setRequestProperty(
+                    "Authorization",
+                    "Bearer toytxz5vr5ezf3lgrdjvpap5hnrc3e"
+                )
+                urlConnection.setRequestProperty("Accept", "application/json")
 
-                    urlConnection.doOutput = true
-                    val os: OutputStream = urlConnection.outputStream
-                    val osw = OutputStreamWriter(os, "UTF-8")
-                    osw.write("fields name, video_id; where game = ${params[0]};")
-                    osw.flush()
-                    osw.close()
+                urlConnection.doOutput = true
+                val os: OutputStream = urlConnection.outputStream
+                val osw = OutputStreamWriter(os, "UTF-8")
+                osw.write("fields name, video_id; where game = ${gameId};")
+                osw.flush()
+                osw.close()
 
-                    val inputStream = urlConnection.inputStream
-                    val inputStreamReader = InputStreamReader(inputStream)
-                    val reader = BufferedReader(inputStreamReader)
-                    var line = reader.readLine()
-                    while (line != null) {
-                        builder.append(line)
-                        line = reader.readLine()
-                    }
-                } catch (e: IOException) {
-
-                } catch (e: JSONException) {
-
+                val inputStream = urlConnection.inputStream
+                val inputStreamReader = InputStreamReader(inputStream)
+                val reader = BufferedReader(inputStreamReader)
+                var line = reader.readLine()
+                while (line != null) {
+                    builder.append(line)
+                    line = reader.readLine()
                 }
-                return JSONArray(builder.toString())
+            } catch (e: IOException) {
+
+            } catch (e: JSONException) {
+
             }
-        }
-
-        class JSONVideoLoader(context: Context, private val bundle: Bundle) : AsyncTaskLoader<JSONArray>(context) {
-            override fun loadInBackground(): JSONArray {
-                val gameId = bundle.getString("gameId")
-                val urlConnection: HttpURLConnection
-                val builder = StringBuilder()
-                try {
-                    urlConnection = V4_VIDEOS_URL.openConnection() as HttpURLConnection
-                    urlConnection.requestMethod = "POST"
-                    urlConnection.setRequestProperty("Client-ID", CLIENT_ID)
-                    urlConnection.setRequestProperty(
-                        "Authorization",
-                        "Bearer toytxz5vr5ezf3lgrdjvpap5hnrc3e"
-                    )
-                    urlConnection.setRequestProperty("Accept", "application/json")
-
-                    urlConnection.doOutput = true
-                    val os: OutputStream = urlConnection.outputStream
-                    val osw = OutputStreamWriter(os, "UTF-8")
-                    osw.write("fields name, video_id; where game = ${gameId};")
-                    osw.flush()
-                    osw.close()
-
-                    val inputStream = urlConnection.inputStream
-                    val inputStreamReader = InputStreamReader(inputStream)
-                    val reader = BufferedReader(inputStreamReader)
-                    var line = reader.readLine()
-                    while (line != null) {
-                        builder.append(line)
-                        line = reader.readLine()
-                    }
-                } catch (e: IOException) {
-
-                } catch (e: JSONException) {
-
-                }
-                return JSONArray(builder.toString())
-            }
-
-            override fun onStartLoading() {
-                super.onStartLoading()
-                forceLoad()
-            }
+            return JSONArray(builder.toString())
         }
 
         fun getTokenFromTwitch(): JSONObject {
-            return JSONTokenLoadTask().execute(buildTokenURL()).get()
+            var jsonObject = JSONObject()
+            runBlocking {
+                val job = GlobalScope.launch(Dispatchers.IO) {
+                    val result = async { getTokenJSONObject() }
+                    jsonObject = result.await()
+                }
+                job.join()
+            }
+            return jsonObject
         }
 
-        private class JSONTokenLoadTask : AsyncTask<URL, Void, JSONObject>() {
-            override fun doInBackground(vararg params: URL?): JSONObject {
-                val urlConnection: HttpURLConnection
-                val builder = StringBuilder()
-                try {
-                    urlConnection = params[0]?.openConnection() as HttpURLConnection
-                    urlConnection.requestMethod = "POST"
+        private fun getTokenJSONObject(): JSONObject {
+            val urlConnection: HttpURLConnection
+            val builder = StringBuilder()
+            try {
+                urlConnection = buildTokenURL().openConnection() as HttpURLConnection
+                urlConnection.requestMethod = "POST"
 
-                    val inputStream = urlConnection.inputStream
-                    val inputStreamReader = InputStreamReader(inputStream)
-                    val reader = BufferedReader(inputStreamReader)
-                    var line = reader.readLine()
-                    while (line != null) {
-                        builder.append(line)
-                        line = reader.readLine()
-                    }
-
-                } catch (e: IOException) {
-
-                } catch (e: JSONException) {
-
+                val inputStream = urlConnection.inputStream
+                val inputStreamReader = InputStreamReader(inputStream)
+                val reader = BufferedReader(inputStreamReader)
+                var line = reader.readLine()
+                while (line != null) {
+                    builder.append(line)
+                    line = reader.readLine()
                 }
-                return JSONObject(builder.toString())
+
+            } catch (e: IOException) {
+
+            } catch (e: JSONException) {
+
             }
+            return JSONObject(builder.toString())
         }
 
         fun hasConnection(context: Context): Boolean {
-            val connectivityManager: ConnectivityManager = context.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val connectivityManager: ConnectivityManager =
+                context.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
 
             val networkInfo = connectivityManager.activeNetworkInfo
-            if (networkInfo!=null){
-                if(networkInfo.state == NetworkInfo.State.CONNECTED){
+            if (networkInfo != null) {
+                if (networkInfo.state == NetworkInfo.State.CONNECTED) {
                     return true
                 }
             }

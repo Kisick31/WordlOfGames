@@ -148,6 +148,7 @@
             android:layout_margin="8dp"
             android:text="@string/add_to_favourite"
             android:textColor="#9981ff"
+            android:backgroundTint="@color/white"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewBigCover"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewBigCover" />

@@ -1,16 +1,15 @@
 package com.example.worldofgames.data
 
 import androidx.room.TypeConverter
-import java.util.*
 
 class MyTypeConverter {
     @TypeConverter
-    fun fromHobbies(hobbies: List<String>): String {
-        return hobbies.joinToString(",")
+    fun fromStringList(list: List<String>): String {
+        return list.joinToString(",")
     }
 
     @TypeConverter
-    fun toHobbies(data: String): List<String> {
-        return data.split(",")
+    fun toStringList(string: String): List<String> {
+        return string.split(",")
     }
 }

@@ -1,16 +1,24 @@
 package com.example.worldofgames
 
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.worldofgames.fragments.FavouriteFragment
 import com.example.worldofgames.fragments.SettingsFragment
 import com.example.worldofgames.fragments.TopFragment
+import com.google.android.material.internal.NavigationMenu
+import com.google.android.material.internal.NavigationMenuView
+import com.ismaeldivita.chipnavigation.ChipNavigationBar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+
+
     companion object {
+        val API_LVL = Build.VERSION.SDK_INT
         var wasLoaded = true
         var gameID = 0
     }
@@ -25,13 +33,23 @@ class MainActivity : AppCompatActivity() {
 
         makeCurrentFragment(topFragment)
 
-        bottomNavigation.setOnNavigationItemSelectedListener {
+        if(API_LVL<23){
+            bottomNavigation.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.ic_video_game -> makeCurrentFragment(topFragment)
                 R.id.ic_favorite -> makeCurrentFragment(favouriteFragment)
                 else -> makeCurrentFragment(settingsFragment)
             }
             true
+            }
+        } else {
+            navigationBar.setOnItemSelectedListener {
+                when (it) {
+                    R.id.ic_video_game -> makeCurrentFragment(topFragment)
+                    R.id.ic_favorite -> makeCurrentFragment(favouriteFragment)
+                    else -> makeCurrentFragment(settingsFragment)
+                }
+            }
         }
     }
 

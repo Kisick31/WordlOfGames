@@ -1,8 +1,8 @@
-package com.example.worldofgames.data
+package com.example.worldofgames.converters
 
 import androidx.room.TypeConverter
 
-class MyTypeConverter {
+class TypeConverter {
     @TypeConverter
     fun fromStringList(list: List<String>): String {
         return list.joinToString(",")

@@ -10,13 +10,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.worldofgames.MainActivity
 import com.example.worldofgames.MainActivity.Companion.gameID
 import com.example.worldofgames.R
 import com.example.worldofgames.adapters.VideoAdapter
-import com.example.worldofgames.data.FavouriteGame
-import com.example.worldofgames.data.Game
-import com.example.worldofgames.data.MainViewModel
+import com.example.worldofgames.enteties.FavouriteGame
+import com.example.worldofgames.enteties.Game
+import com.example.worldofgames.data.GameViewModel
 import com.example.worldofgames.utils.JSONUtils
 import com.example.worldofgames.utils.NetworkUtils
 import com.squareup.picasso.Picasso
@@ -26,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_detail.view.*
 class DetailFragment : Fragment(), VideoAdapter.OnPlayClickListener {
 
     private lateinit var videoAdapter: VideoAdapter
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: GameViewModel
     private var gameId: Int = 0
     private lateinit var game: Game
     private var favouriteGame: FavouriteGame? = null
@@ -39,7 +38,7 @@ class DetailFragment : Fragment(), VideoAdapter.OnPlayClickListener {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-            .create(MainViewModel::class.java)
+            .create(GameViewModel::class.java)
         gameId = gameID
         game = viewModel.getGameById(gameId)
 

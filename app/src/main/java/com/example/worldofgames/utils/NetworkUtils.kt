@@ -76,8 +76,6 @@ class NetworkUtils {
                             "genres.name, " +
                             "age_ratings.rating, " +
                             "rating, " +
-                            "involved_companies.company.name, " +
-                            "involved_companies.developer, " +
                             "release_dates.human, " +
                             "platforms.name, " +
                             "summary;" +

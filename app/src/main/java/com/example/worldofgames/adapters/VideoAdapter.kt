@@ -6,8 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.worldofgames.R
-import com.example.worldofgames.data.Video
-import java.net.URL
+import com.example.worldofgames.enteties.Video
 
 class VideoAdapter(private var listener: OnPlayClickListener) :
     RecyclerView.Adapter<VideoAdapter.VideoViewHolder>() {

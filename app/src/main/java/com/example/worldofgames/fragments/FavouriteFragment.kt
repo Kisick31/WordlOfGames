@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.worldofgames.MainActivity.Companion.gameID
 import com.example.worldofgames.R
 import com.example.worldofgames.adapters.GamesAdapter
-import com.example.worldofgames.data.Game
-import com.example.worldofgames.data.MainViewModel
+import com.example.worldofgames.enteties.Game
+import com.example.worldofgames.data.GameViewModel
 
 class FavouriteFragment : Fragment(), GamesAdapter.OnCoverClickListener {
 
     private lateinit var gamesAdapter: GamesAdapter
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: GameViewModel
     private lateinit var recyclerViewFavouriteGames: RecyclerView
 
     override fun onCreateView(
@@ -30,7 +30,7 @@ class FavouriteFragment : Fragment(), GamesAdapter.OnCoverClickListener {
         gamesAdapter = GamesAdapter(this)
         recyclerViewFavouriteGames.adapter = gamesAdapter
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application).create(
-            MainViewModel::class.java)
+            GameViewModel::class.java)
         val favouriteGames = viewModel.favouriteGames
         favouriteGames.observe(this, {
             gamesAdapter.games = it

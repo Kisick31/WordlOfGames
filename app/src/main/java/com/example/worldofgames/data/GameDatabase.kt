@@ -2,10 +2,13 @@ package com.example.worldofgames.data
 
 import android.content.Context
 import androidx.room.*
+import com.example.worldofgames.converters.TypeConverter
+import com.example.worldofgames.enteties.FavouriteGame
+import com.example.worldofgames.enteties.Game
 
 
-@Database(entities = [Game::class, FavouriteGame::class], version = 3, exportSchema = false)
-@TypeConverters(MyTypeConverter::class)
+@Database(entities = [Game::class, FavouriteGame::class], version = 4, exportSchema = false)
+@TypeConverters(TypeConverter::class)
 abstract class GameDatabase : RoomDatabase() {
 
     abstract fun gamesDao(): GamesDao

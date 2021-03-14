@@ -2,8 +2,8 @@ package com.example.worldofgames.utils
 
 import android.content.Context
 import com.example.worldofgames.R
-import com.example.worldofgames.data.Game
-import com.example.worldofgames.data.Video
+import com.example.worldofgames.enteties.Game
+import com.example.worldofgames.enteties.Video
 import org.json.JSONArray
 import org.json.JSONException
 import kotlin.collections.*
@@ -26,23 +26,6 @@ class JSONUtils{
                     resultGame.getString("summary")
                 } catch (e: JSONException){
                     ""
-                }
-
-                val developerName = try {
-                    kotlin.run {
-                        var trueDeveloperName = "Developer"
-                        for (j in 0 until resultGame.getJSONArray("involved_companies")
-                            .length()) {
-                            if (resultGame.getJSONArray("involved_companies").getJSONObject(j)
-                                    .getBoolean("developer")
-                            )
-                                trueDeveloperName = resultGame.getJSONArray("involved_companies")
-                                    .getJSONObject(j).getJSONObject("company").getString("name")
-                        }
-                        trueDeveloperName
-                    }
-                } catch (e: JSONException) {
-                    context.getString(R.string.developer_not_specified)
                 }
 
                 val ageRating = try {
@@ -120,7 +103,6 @@ class JSONUtils{
                 val game = Game(
                     id,
                     name,
-                    developerName,
                     coverUrl,
                     ageRating,
                     rating,

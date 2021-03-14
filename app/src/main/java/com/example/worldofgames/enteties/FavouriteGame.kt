@@ -1,4 +1,4 @@
-package com.example.worldofgames.data
+package com.example.worldofgames.enteties
 
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -9,7 +9,6 @@ class FavouriteGame : Game {
         uniqueId: Int,
         id: Int,
         name: String,
-        developerName: String,
         coverUrl: String,
         ageRating: String,
         rating: Int,
@@ -19,14 +18,14 @@ class FavouriteGame : Game {
         screenshots: List<String>,
         summary: String
     ) : super(
-        uniqueId, id, name, developerName, coverUrl,
+        uniqueId, id, name, coverUrl,
         ageRating, rating, genres, releaseDate,
         platforms, screenshots, summary
     )
 
     @Ignore
     constructor(game: Game) : super(
-        game.uniqueId, game.id, game.name, game.developerName, game.coverUrl, game.ageRating,
+        game.uniqueId, game.id, game.name, game.coverUrl, game.ageRating,
         game.rating, game.genres, game.releaseDate, game.platforms, game.screenshots, game.summary
     )
 }

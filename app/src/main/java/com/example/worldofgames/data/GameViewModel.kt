@@ -4,9 +4,11 @@ import android.app.Application
 import android.os.AsyncTask
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import com.example.worldofgames.enteties.FavouriteGame
+import com.example.worldofgames.enteties.Game
 
 
-class   MainViewModel(application: Application) : AndroidViewModel(application) {
+class   GameViewModel(application: Application) : AndroidViewModel(application) {
 
     var games: LiveData<List<Game>>
     var favouriteGames: LiveData<List<FavouriteGame>>

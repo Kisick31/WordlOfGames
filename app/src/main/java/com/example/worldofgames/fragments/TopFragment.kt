@@ -12,15 +12,15 @@ import com.example.worldofgames.MainActivity
 import com.example.worldofgames.MainActivity.Companion.gameID
 import com.example.worldofgames.R
 import com.example.worldofgames.adapters.GamesAdapter
-import com.example.worldofgames.data.Game
-import com.example.worldofgames.data.MainViewModel
+import com.example.worldofgames.enteties.Game
+import com.example.worldofgames.data.GameViewModel
 import com.example.worldofgames.utils.JSONUtils
 import com.example.worldofgames.utils.NetworkUtils
 
 class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener {
 
     private lateinit var recyclerViewCover: RecyclerView
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: GameViewModel
     private lateinit var gamesAdapter: GamesAdapter
 
     override fun onCoverClick(position: Int, game: Game) {
@@ -47,7 +47,7 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener {
         val activity = requireActivity()
         val view = inflater.inflate(R.layout.fragment_top, container, false)
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(activity.application)
-            .create(MainViewModel::class.java)
+            .create(GameViewModel::class.java)
         recyclerViewCover = view.findViewById(R.id.recyclerViewCover)
 
         recyclerViewCover.layoutManager = GridLayoutManager(context, 2)

@@ -1,4 +1,4 @@
-package com.example.worldofgames.data
+package com.example.worldofgames.enteties
 
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -10,7 +10,6 @@ open class Game
 constructor(
     var id: Int,
     var name: String,
-    var developerName: String,
     var coverUrl: String,
     var ageRating: String,
     var rating: Int,
@@ -28,7 +27,6 @@ constructor(
         uniqueId: Int,
         id: Int,
         name: String,
-        developerName: String,
         coverUrl: String,
         ageRating: String,
         rating: Int,
@@ -40,7 +38,6 @@ constructor(
     ) : this(
         id,
         name,
-        developerName,
         coverUrl,
         ageRating,
         rating,

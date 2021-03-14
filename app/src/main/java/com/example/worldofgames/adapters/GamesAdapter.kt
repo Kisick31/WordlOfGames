@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.worldofgames.R
-import com.example.worldofgames.data.Game
+import com.example.worldofgames.enteties.Game
 import com.squareup.picasso.Picasso
 
 

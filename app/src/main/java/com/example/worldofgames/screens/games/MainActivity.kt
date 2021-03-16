@@ -1,25 +1,22 @@
-package com.example.worldofgames
+package com.example.worldofgames.screens.games
 
 import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.util.Log
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.worldofgames.fragments.FavouriteFragment
-import com.example.worldofgames.fragments.SettingsFragment
-import com.example.worldofgames.fragments.TopFragment
-import com.google.android.material.internal.NavigationMenu
-import com.google.android.material.internal.NavigationMenuView
-import com.ismaeldivita.chipnavigation.ChipNavigationBar
+import com.example.worldofgames.R
+import com.example.worldofgames.screens.games.fragments.FavouriteFragment
+import com.example.worldofgames.screens.games.fragments.SettingsFragment
+import com.example.worldofgames.screens.games.fragments.TopFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-
-
     companion object {
         val API_LVL = Build.VERSION.SDK_INT
-        var wasLoaded = true
+        var wasLoaded = false
         var gameID = 0
     }
 
@@ -31,9 +28,11 @@ class MainActivity : AppCompatActivity() {
         val favouriteFragment = FavouriteFragment()
         val settingsFragment = SettingsFragment()
 
+
         makeCurrentFragment(topFragment)
 
-        if(API_LVL<23){
+
+        if(API_LVL <23){
             bottomNavigation.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.ic_video_game -> makeCurrentFragment(topFragment)
@@ -43,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             true
             }
         } else {
+            navigationBar.setItemSelected(2131230917, true)
             navigationBar.setOnItemSelectedListener {
                 when (it) {
                     R.id.ic_video_game -> makeCurrentFragment(topFragment)

@@ -1,6 +1,7 @@
-package com.example.worldofgames.fragments
+package com.example.worldofgames.screens.games.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,14 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.worldofgames.MainActivity
-import com.example.worldofgames.MainActivity.Companion.gameID
+import com.example.worldofgames.screens.games.MainActivity.Companion.gameID
 import com.example.worldofgames.R
 import com.example.worldofgames.adapters.GamesAdapter
-import com.example.worldofgames.enteties.Game
-import com.example.worldofgames.data.GameViewModel
-import com.example.worldofgames.utils.JSONUtils
-import com.example.worldofgames.utils.NetworkUtils
+import com.example.worldofgames.screens.games.GameViewModel
+import com.example.worldofgames.enteties.games.GameItem
+import com.example.worldofgames.screens.games.MainActivity.Companion.wasLoaded
+import kotlinx.android.synthetic.main.fragment_top.view.*
 
 class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener {
 
@@ -23,20 +23,11 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener {
     private lateinit var viewModel: GameViewModel
     private lateinit var gamesAdapter: GamesAdapter
 
-    override fun onCoverClick(position: Int, game: Game) {
+    override fun onCoverClick(position: Int, game: GameItem) {
         gameID = game.id
         fragmentManager?.beginTransaction()?.apply {
             replace(R.id.fl_wrapper, DetailFragment())
             commit()
-        }
-    }
-    private fun downloadData() {
-        val games = JSONUtils.getGamesFromJSON(NetworkUtils.getGamesFromTwitch(), requireActivity())
-        if (games.isNotEmpty()) {
-            viewModel.deleteAllGames()
-            for (game in games) {
-                viewModel.insertGame(game)
-            }
         }
     }
 
@@ -44,24 +35,32 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val activity = requireActivity()
         val view = inflater.inflate(R.layout.fragment_top, container, false)
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(activity.application)
             .create(GameViewModel::class.java)
+        val loading = viewModel.loading
         recyclerViewCover = view.findViewById(R.id.recyclerViewCover)
-
         recyclerViewCover.layoutManager = GridLayoutManager(context, 2)
         gamesAdapter = GamesAdapter(this)
         recyclerViewCover.adapter = gamesAdapter
-        if (NetworkUtils.hasConnection(activity.applicationContext)&&MainActivity.wasLoaded) {
-            downloadData()
-            MainActivity.wasLoaded = false
-        }
+        recyclerViewCover.itemAnimator?.changeDuration = 0
         val gamesFromLiveData = viewModel.games
         gamesFromLiveData.observe(this, {
             gamesAdapter.games = it
         })
+        viewModel.mutableIsDataLoading.observe(this, {
+            Log.d("KEK", it.toString())
+            view.progressBarLoad.visibility = if(it!=null && it) View.VISIBLE else View.GONE
+        })
+
+
+            viewModel.loadData()
+            wasLoaded = true
+        view.progressBarLoad.visibility = View.GONE
         return view
     }
+
 
 }

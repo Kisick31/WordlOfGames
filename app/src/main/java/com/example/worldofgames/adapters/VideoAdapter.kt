@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.worldofgames.R
-import com.example.worldofgames.enteties.Video
+import com.example.worldofgames.enteties.videos.VideoItem
 
 class VideoAdapter(private var listener: OnPlayClickListener) :
     RecyclerView.Adapter<VideoAdapter.VideoViewHolder>() {
 
-    var videos: List<Video> = listOf()
+    var videoItems: List<VideoItem> = listOf()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -23,12 +23,12 @@ class VideoAdapter(private var listener: OnPlayClickListener) :
     }
 
     override fun getItemCount(): Int {
-        return videos.size
+        return videoItems.size
     }
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
-        val video = videos[position]
-        holder.itemView.tag = video.videoUrl
+        val video = videoItems[position]
+        holder.itemView.tag = "https://www.youtube.com/watch?v=${video.videoUrl}"
         holder.textViewVideoName.text = video.name
     }
 

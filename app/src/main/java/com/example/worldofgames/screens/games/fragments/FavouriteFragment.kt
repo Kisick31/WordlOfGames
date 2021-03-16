@@ -1,4 +1,4 @@
-package com.example.worldofgames.fragments
+package com.example.worldofgames.screens.games.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,11 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.worldofgames.MainActivity.Companion.gameID
+import com.example.worldofgames.screens.games.MainActivity.Companion.gameID
 import com.example.worldofgames.R
 import com.example.worldofgames.adapters.GamesAdapter
-import com.example.worldofgames.enteties.Game
-import com.example.worldofgames.data.GameViewModel
+import com.example.worldofgames.screens.games.GameViewModel
+import com.example.worldofgames.enteties.games.GameItem
 
 class FavouriteFragment : Fragment(), GamesAdapter.OnCoverClickListener {
 
@@ -39,7 +39,7 @@ class FavouriteFragment : Fragment(), GamesAdapter.OnCoverClickListener {
         return view
     }
 
-    override fun onCoverClick(position: Int, game: Game) {
+    override fun onCoverClick(position: Int, game: GameItem) {
         gameID = game.id
         fragmentManager?.beginTransaction()?.apply {
             replace(R.id.fl_wrapper, DetailFragment())

@@ -13,7 +13,7 @@
             android:width="18dip" />
 
         <gradient
-            android:centerColor="@color/richLavender"
+            android:centerColor="@color/purple_200"
             android:centerY="1"
             android:endColor="@color/black"
             android:startColor="@color/purple_200"

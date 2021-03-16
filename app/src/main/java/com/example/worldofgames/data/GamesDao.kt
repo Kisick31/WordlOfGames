@@ -1,32 +1,33 @@
 package com.example.worldofgames.data
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.example.worldofgames.enteties.FavouriteGame
-import com.example.worldofgames.enteties.Game
+import com.example.worldofgames.enteties.games.GameItem
+
 
 @Dao
 interface GamesDao {
-    @Query("SELECT * FROM favourite_games")
+    @Query("SELECT * FROM fav_games")
     fun getAllFavouriteGames(): LiveData<List<FavouriteGame>>
 
-    @Query("SELECT * FROM game")
-    fun getAllGames() : LiveData<List<Game>>
+    @Query("SELECT * FROM games")
+    fun getAllGames() : LiveData<List<GameItem>>
 
-    @Query("SELECT * FROM game WHERE id == :gameId")
-    fun getGameById(gameId: Int?): Game
+    @Query("SELECT * FROM games WHERE id == :gameId")
+    fun getGameById(gameId: Int?): GameItem
 
-    @Query("DELETE FROM game")
+    @Query("DELETE FROM games")
     fun deleteAllGames()
 
-    @Insert
-    fun insertGame(game: Game)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertGame(game: GameItem)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertGames(games: List<GameItem>)
 
     @Delete
-    fun deleteGame(game: Game)
+    fun deleteGame(game: GameItem)
 
     @Insert
     fun insertFavouriteGame(favouriteGame: FavouriteGame)
@@ -34,7 +35,6 @@ interface GamesDao {
     @Delete
     fun deleteFavouriteGame(favouriteGame: FavouriteGame)
 
-    @Query("SELECT * FROM favourite_games WHERE id == :gameId")
+    @Query("SELECT * FROM fav_games WHERE id == :gameId")
     fun getFavouriteGameById(gameId: Int): FavouriteGame
-
 }

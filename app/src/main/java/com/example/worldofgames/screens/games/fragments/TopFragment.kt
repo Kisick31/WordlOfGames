@@ -13,7 +13,7 @@ import com.example.worldofgames.R
 import com.example.worldofgames.adapters.GamesAdapter
 import com.example.worldofgames.adapters.OnHypeGamesAdapter
 import com.example.worldofgames.constants.GameType
-import com.example.worldofgames.enteties.HypeGame
+import com.example.worldofgames.enteties.hype_games.HypeGameItem
 import com.example.worldofgames.enteties.games.GameItem
 import com.example.worldofgames.screens.games.GameViewModel
 import com.example.worldofgames.screens.games.MainActivity.Companion.gameID
@@ -37,23 +37,6 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener,
     private var timerTask: TimerTask? = null
     private var position: Int = 0
 
-    override fun onCoverClick(position: Int, game: GameItem) {
-        gameID = game.id
-        gameType = GameType.SIMPLE_GAME
-        fragmentManager?.beginTransaction()?.apply {
-            replace(R.id.fl_wrapper, DetailFragment())
-            commit()
-        }
-    }
-
-    override fun onHypeCoverClick(position: Int, game: HypeGame) {
-        gameID = game.id
-        gameType = GameType.HYPE_GAME
-        fragmentManager?.beginTransaction()?.apply {
-            replace(R.id.fl_wrapper, DetailFragment())
-            commit()
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,8 +53,24 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener,
         recyclerViewOnHype = view.findViewById(R.id.recyclerViewOnHype)
         recyclerViewCover = view.findViewById(R.id.recyclerViewCover)
 
+        recyclerViewCover.layoutManager = GridLayoutManager(context, 2)
+        gamesAdapter = GamesAdapter(this)
+        recyclerViewCover.adapter = gamesAdapter
+        recyclerViewCover.itemAnimator?.changeDuration = 0
+
+        viewModel.games.observe(this, {
+            gamesAdapter.games = it
+        })
+
+        viewModel.isDataLoading.observe(this, {
+            view.progressBarLoad.visibility = if (it != null && it) View.VISIBLE else View.GONE
+        })
+
+        viewModel.loadData()
+        view.progressBarLoad.visibility = View.GONE
+
         autoScrollLayoutManager = object : LinearLayoutManager(context,
-           HORIZONTAL, false) {
+            HORIZONTAL, false) {
             override fun smoothScrollToPosition(
                 recyclerView: RecyclerView,
                 state: RecyclerView.State,
@@ -89,8 +88,7 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener,
             }
         }
         recyclerViewOnHype.layoutManager = autoScrollLayoutManager
-
-        val onHypeGamesAdapter = OnHypeGamesAdapter(this, viewModel.loadOnHypeGames(), requireContext())
+        val onHypeGamesAdapter = OnHypeGamesAdapter(this, viewModel.getOnHypeGames(), requireContext())
         recyclerViewOnHype.adapter = onHypeGamesAdapter
 
         position = Int.MAX_VALUE / 2
@@ -111,22 +109,6 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener,
                 }
             }
         })
-
-        recyclerViewCover.layoutManager = GridLayoutManager(context, 2)
-        gamesAdapter = GamesAdapter(this)
-        recyclerViewCover.adapter = gamesAdapter
-        recyclerViewCover.itemAnimator?.changeDuration = 0
-
-        viewModel.games.observe(this, {
-            gamesAdapter.games = it
-        })
-
-        viewModel.isDataLoading.observe(this, {
-            view.progressBarLoad.visibility = if (it != null && it) View.VISIBLE else View.GONE
-        })
-
-        viewModel.loadData()
-        view.progressBarLoad.visibility = View.GONE
 
         return view
     }
@@ -169,4 +151,23 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener,
             timer!!.schedule(timerTask, 4000, 4000)
         }
     }
+
+    override fun onCoverClick(position: Int, game: GameItem) {
+        gameID = game.id
+        gameType = GameType.SIMPLE_GAME
+        fragmentManager?.beginTransaction()?.apply {
+            replace(R.id.fl_wrapper, DetailFragment())
+            commit()
+        }
+    }
+
+    override fun onHypeCoverClick(position: Int, game: HypeGameItem) {
+        gameID = game.id
+        gameType = GameType.HYPE_GAME
+        fragmentManager?.beginTransaction()?.apply {
+            replace(R.id.fl_wrapper, DetailFragment())
+            commit()
+        }
+    }
+
 }

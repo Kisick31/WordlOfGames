@@ -3,11 +3,11 @@ package com.example.worldofgames.data
 import android.content.Context
 import androidx.room.*
 import com.example.worldofgames.enteties.FavouriteGame
-import com.example.worldofgames.enteties.HypeGame
+import com.example.worldofgames.enteties.hype_games.HypeGameItem
 import com.example.worldofgames.enteties.games.GameItem
 
 
-@Database(entities = [GameItem::class, FavouriteGame::class, HypeGame::class], version = 4, exportSchema = false)
+@Database(entities = [GameItem::class, FavouriteGame::class, HypeGameItem::class], version = 4, exportSchema = false)
 abstract class GameDatabase : RoomDatabase() {
 
     abstract fun gamesDao(): GamesDao

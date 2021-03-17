@@ -3,11 +3,9 @@ package com.example.worldofgames.screens.games
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.worldofgames.R
-import com.example.worldofgames.enteties.HypeGame
 import com.example.worldofgames.screens.games.fragments.FavouriteFragment
 import com.example.worldofgames.screens.games.fragments.SettingsFragment
 import com.example.worldofgames.screens.games.fragments.TopFragment
@@ -60,25 +58,4 @@ class MainActivity : AppCompatActivity() {
             replace(R.id.fl_wrapper, fragment)
             commit()
         }
-
-//  override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        val menuInflater = menuInflater
-//        menuInflater.inflate(R.menu.main_menu, menu)
-//        return super.onCreateOptionsMenu(menu)
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when(item.itemId){
-//            R.id.itemMain -> {
-//                val intentToMainActivity = Intent(this, MainActivity::class.java)
-//                startActivity(intentToMainActivity)
-//            }
-//            R.id.itemFavourite -> {
-//                val intentToFavouriteActivity = Intent(this, FavouriteActivity::class.java)
-//                startActivity(intentToFavouriteActivity)
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
-
 }

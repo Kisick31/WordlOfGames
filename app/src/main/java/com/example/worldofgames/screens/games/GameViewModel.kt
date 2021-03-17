@@ -1,18 +1,17 @@
 package com.example.worldofgames.screens.games
 
 import android.app.Application
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.worldofgames.data.GameDatabase
 import com.example.worldofgames.enteties.FavouriteGame
-import com.example.worldofgames.enteties.HypeGame
-import com.example.worldofgames.enteties.HypeGameList
-import com.example.worldofgames.enteties.games.Game
+import com.example.worldofgames.enteties.hype_games.HypeGameItem
+import com.example.worldofgames.enteties.hype_games.HypeGameList
+import com.example.worldofgames.enteties.games.GameList
 import com.example.worldofgames.enteties.games.GameItem
-import com.example.worldofgames.enteties.videos.Video
+import com.example.worldofgames.enteties.videos.VideoList
 import com.github.kittinunf.fuel.core.*
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
@@ -67,35 +66,35 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }.join()
     }
 
-    fun deleteFavouriteGame(favGame: FavouriteGame) = runBlocking{
+    fun deleteFavouriteGame(favGame: FavouriteGame) = runBlocking {
         CoroutineScope(Dispatchers.IO).launch {
             db.gamesDao().deleteFavouriteGame(favGame)
         }.join()
     }
 
-    fun loadOnHypeGames(): ArrayList<HypeGame>{
-        var gamesItems = arrayListOf<HypeGame>()
-        "https://api.igdb.com/v4/games".httpPost()
-            .header(
-                "Client-ID" to CLIENT_ID,
-                "Authorization" to AUTHORIZATION,
-                "Accept" to ACCEPT
-            )
-            .body(BODY + SORT_ON_HYPE).responseString { _, _, result ->
-                when (result) {
-                    is Result.Failure -> {
-                        val ex = result.getException()
-                        mutableErrors.value = ex
+    fun getOnHypeGames() : HypeGameList {
+        var gamesItems = listOf<HypeGameItem>()
+            "https://api.igdb.com/v4/games".httpPost()
+                .header(
+                    "Client-ID" to CLIENT_ID,
+                    "Authorization" to AUTHORIZATION,
+                    "Accept" to ACCEPT
+                )
+                .body(BODY + SORT_ON_HYPE).responseString { _, _, result ->
+                    when (result) {
+                        is Result.Failure -> {
+                            val ex = result.getException()
+                            mutableErrors.value = ex
+                        }
+                        is Result.Success -> {
+                            val data = result.get()
+                            gamesItems = Gson().fromJson(data, HypeGameList::class.java)
+                            db.gamesDao().deleteAllHypeGames()
+                            db.gamesDao().insertHypeGames(gamesItems)
+                        }
                     }
-                    is Result.Success -> {
-                        val data = result.get()
-                        gamesItems = Gson().fromJson(data, HypeGameList::class.java)
-                        db.gamesDao().deleteAllHypeGames()
-                        db.gamesDao().insertHypeGames(gamesItems)
-                    }
-                }
-            }.join()
-        return gamesItems
+                }.join()
+        return gamesItems as HypeGameList
     }
 
     fun loadData() {
@@ -116,7 +115,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         }
                         is Result.Success -> {
                             val data = result.get()
-                            val gamesItems = Gson().fromJson(data, Game::class.java)
+                            val gamesItems = Gson().fromJson(data, GameList::class.java)
                             db.gamesDao().deleteAllGames()
                             db.gamesDao().insertGames(gamesItems)
                         }
@@ -127,7 +126,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    fun getVideosOfTheGame(gameId: Int): Video = runBlocking {
+    fun getVideosOfTheGame(gameId: Int): VideoList = runBlocking {
         var videoJsonString: String? = null
         CoroutineScope(Dispatchers.IO).launch {
             val (_, response, result) = "https://api.igdb.com/v4/game_videos".httpPost()
@@ -142,7 +141,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 videoJsonString = result.component1()
             }
         }.join()
-        return@runBlocking Gson().fromJson(videoJsonString, Video::class.java)
+        return@runBlocking Gson().fromJson(videoJsonString, VideoList::class.java)
     }
-
 }

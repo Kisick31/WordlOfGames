@@ -8,11 +8,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.worldofgames.R
-import com.example.worldofgames.enteties.HypeGame
+import com.example.worldofgames.enteties.hype_games.HypeGameItem
 import com.squareup.picasso.Picasso
 
 class OnHypeGamesAdapter (private var listener: OnCoverClickListener,
-                          private var games: List<HypeGame>?,
+                          private var games: List<HypeGameItem>?,
                           private var context: Context)
     : RecyclerView.Adapter<OnHypeGamesAdapter.GameViewHolder>(){
 
@@ -47,11 +47,11 @@ class OnHypeGamesAdapter (private var listener: OnCoverClickListener,
         }
 
         override fun onClick(v: View?) {
-            listener.onHypeCoverClick(adapterPosition, itemView.tag as HypeGame)
+            listener.onHypeCoverClick(adapterPosition, itemView.tag as HypeGameItem)
         }
     }
 
     interface OnCoverClickListener{
-        fun onHypeCoverClick(position: Int, game: HypeGame)
+        fun onHypeCoverClick(position: Int, game: HypeGameItem)
     }
 }

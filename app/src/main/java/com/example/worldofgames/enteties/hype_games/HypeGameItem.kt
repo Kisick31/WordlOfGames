@@ -1,4 +1,4 @@
-package com.example.worldofgames.enteties
+package com.example.worldofgames.enteties.hype_games
 
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -15,7 +15,7 @@ import com.example.worldofgames.enteties.games.*
     ScreenshotTC::class,
     CoverTC::class
 ])
-class HypeGame : GameItem {
+class HypeGameItem : GameItem {
     constructor(
         uniqueId: Int,
         ageRatings: List<AgeRating>,

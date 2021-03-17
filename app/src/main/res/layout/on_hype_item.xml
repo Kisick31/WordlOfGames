@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/imageViewCoverOnHype"
@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/poster_of_game"
             android:adjustViewBounds="true"
+            android:padding="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/guidelineHypeItem"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,8 +37,6 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_margin="4dp"
-            android:gravity="start"
-            app:layout_constraintTop_toBottomOf="@id/textViewHypeGameReleaseDate"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/guidelineHypeItem"/>
 
@@ -46,10 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:textStyle="bold"
             android:textSize="16sp"
-            android:gravity="start"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/textViewHypeGameTitle"
             app:layout_constraintStart_toEndOf="@id/guidelineHypeItem" />
 

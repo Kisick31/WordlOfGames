@@ -3,7 +3,7 @@ package com.example.worldofgames.data
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.worldofgames.enteties.FavouriteGame
-import com.example.worldofgames.enteties.HypeGame
+import com.example.worldofgames.enteties.hype_games.HypeGameItem
 import com.example.worldofgames.enteties.games.GameItem
 
 
@@ -41,13 +41,13 @@ interface GamesDao {
     fun getFavouriteGameById(gameId: Int): FavouriteGame
 
     @Query("SELECT * FROM hype_games")
-    fun getAllHypeGames() : LiveData<List<HypeGame>>
+    fun getAllHypeGames() : LiveData<List<HypeGameItem>?>
 
     @Query("DELETE FROM hype_games")
     fun deleteAllHypeGames()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertHypeGames(games: List<HypeGame>)
+    fun insertHypeGames(gameItems: List<HypeGameItem>)
 
     @Query("SELECT * FROM hype_games WHERE id == :gameId")
     fun getHypeGameById(gameId: Int?): GameItem

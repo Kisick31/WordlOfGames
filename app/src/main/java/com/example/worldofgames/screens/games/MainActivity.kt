@@ -7,6 +7,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.worldofgames.R
+import com.example.worldofgames.enteties.HypeGame
 import com.example.worldofgames.screens.games.fragments.FavouriteFragment
 import com.example.worldofgames.screens.games.fragments.SettingsFragment
 import com.example.worldofgames.screens.games.fragments.TopFragment
@@ -16,8 +17,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         val API_LVL = Build.VERSION.SDK_INT
-        var wasLoaded = false
         var gameID = 0
+        var gameType = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +43,9 @@ class MainActivity : AppCompatActivity() {
             true
             }
         } else {
-            navigationBar.setItemSelected(2131230917, true)
+            navigationBar.setItemSelected(R.id.ic_video_game, true)
             navigationBar.setOnItemSelectedListener {
+                Log.d("KEK", it.toString())
                 when (it) {
                     R.id.ic_video_game -> makeCurrentFragment(topFragment)
                     R.id.ic_favorite -> makeCurrentFragment(favouriteFragment)

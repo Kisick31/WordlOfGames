@@ -12,10 +12,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldofgames.R
 import com.example.worldofgames.adapters.VideoAdapter
+import com.example.worldofgames.constants.GameType
 import com.example.worldofgames.enteties.FavouriteGame
 import com.example.worldofgames.enteties.games.GameItem
 import com.example.worldofgames.screens.games.GameViewModel
 import com.example.worldofgames.screens.games.MainActivity.Companion.gameID
+import com.example.worldofgames.screens.games.MainActivity.Companion.gameType
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.coroutines.*
@@ -48,7 +50,10 @@ class DetailFragment : Fragment(), VideoAdapter.OnPlayClickListener {
 
         GlobalScope.launch(Dispatchers.Main) {
             val game = async(Dispatchers.IO) {
-                viewModel.getGameById(gameId)
+                if (gameType == GameType.SIMPLE_GAME)
+                    viewModel.getGameById(gameId)
+                else
+                    viewModel.getHypeGameById(gameId)
             }
 
             setViews(game, view)

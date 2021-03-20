@@ -1,20 +1,18 @@
 package com.example.worldofgames.screens.games
 
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.example.worldofgames.R
-import com.example.worldofgames.screens.games.fragments.FavouriteFragment
-import com.example.worldofgames.screens.games.fragments.SettingsFragment
-import com.example.worldofgames.screens.games.fragments.TopFragment
-import kotlinx.android.synthetic.main.activity_main.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        val API_LVL = Build.VERSION.SDK_INT
         var gameID = 0
         var gameType = 0
     }
@@ -23,39 +21,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val topFragment = TopFragment()
-        val favouriteFragment = FavouriteFragment()
-        val settingsFragment = SettingsFragment()
-
-
-        makeCurrentFragment(topFragment)
-
-
-        if(API_LVL <23){
-            bottomNavigation.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.ic_video_game -> makeCurrentFragment(topFragment)
-                R.id.ic_favorite -> makeCurrentFragment(favouriteFragment)
-                else -> makeCurrentFragment(settingsFragment)
-            }
-            true
-            }
-        } else {
-            navigationBar.setItemSelected(R.id.ic_video_game, true)
-            navigationBar.setOnItemSelectedListener {
-                Log.d("KEK", it.toString())
-                when (it) {
-                    R.id.ic_video_game -> makeCurrentFragment(topFragment)
-                    R.id.ic_favorite -> makeCurrentFragment(favouriteFragment)
-                    else -> makeCurrentFragment(settingsFragment)
-                }
-            }
-        }
+        val host: NavHostFragment = supportFragmentManager
+            .findFragmentById(R.id.appNavHostFragment) as NavHostFragment? ?: return
+        val navController = host.navController
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        val toolBar = findViewById<Toolbar>(R.id.toolbar)
+        val bottomBar = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomBar.setupWithNavController(navController)
+        toolBar.setupWithNavController(navController, appBarConfiguration)
     }
-
-    private fun makeCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fl_wrapper, fragment)
-            commit()
-        }
 }

@@ -14,7 +14,7 @@
     <string name="pegi_twelve">Для всех от 12 лет и старше</string>
     <string name="pegi_sixteen">Для всех от 16 лет и старше</string>
     <string name="pegi_eighteen">Для взрослых от 18 лет и старше</string>
-    <string name="rating_exepted">Рейтинг ожидается</string>
+    <string name="rating_expected">Рейтинг ожидается</string>
     <string name="early_childhood">Для детей младшего возраста</string>
     <string name="everyone">Для всех от 6 лет и старше</string>
     <string name="everyone_10_and_older">Для всех от 10 лет и старше</string>
@@ -28,6 +28,9 @@
     <string name="top_100">TOP 100</string>
     <string name="favorite">Favorite</string>
     <string name="settings">Settings</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_top_100">Топ 100</string>
+    <string name="nav_favourite">Избранные</string>
+    <string name="nav_about_game">Об игре</string>
+    <string name="nav_settings">Настройки</string>
 
 </resources>

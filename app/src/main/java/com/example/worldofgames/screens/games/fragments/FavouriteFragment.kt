@@ -8,14 +8,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.worldofgames.screens.games.MainActivity.Companion.gameID
 import com.example.worldofgames.R
 import com.example.worldofgames.adapters.GamesAdapter
+import com.example.worldofgames.constants.GameType
 import com.example.worldofgames.databinding.FragmentFavouriteBinding
-import com.example.worldofgames.screens.games.GameViewModel
 import com.example.worldofgames.enteties.games.GameItem
+import com.example.worldofgames.screens.games.GameViewModel
+import com.example.worldofgames.screens.games.MainActivity.Companion.gameID
+import com.example.worldofgames.screens.games.MainActivity.Companion.gameType
 
 class FavouriteFragment : Fragment(), GamesAdapter.OnCoverClickListener {
 
@@ -45,7 +47,8 @@ class FavouriteFragment : Fragment(), GamesAdapter.OnCoverClickListener {
 
     override fun onCoverClick(position: Int, game: GameItem) {
         gameID = game.id
-        view?.let { Navigation.findNavController(it).navigate(R.id.action_favouriteFragment_to_detailFragment) }
+        gameType = GameType.FAV_GAME
+        findNavController().navigate(R.id.action_favouriteFragment_to_detailFragment)
     }
 
 }

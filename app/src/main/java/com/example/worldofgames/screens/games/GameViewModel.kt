@@ -51,12 +51,17 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         return db.gamesDao().getHypeGameById(gameId)
     }
 
-    fun getFavouriteGameById(gameId: Int): FavouriteGame? = runBlocking {
+    fun getFavouriteGameById(gameId: Int): GameItem {
+        return db.gamesDao().getFavouriteGameById(gameId)
+    }
+
+    fun getFavouriteGame(gameId: Int): FavouriteGame? = runBlocking {
         var game: FavouriteGame? = null
-        val job = CoroutineScope(Dispatchers.IO).launch {
+
+        CoroutineScope(Dispatchers.IO).launch {
             game = db.gamesDao().getFavouriteGameById(gameId)
-        }
-        job.join()
+        }.join()
+
         return@runBlocking game
     }
 
@@ -66,14 +71,17 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }.join()
     }
 
+
     fun deleteFavouriteGame(favGame: FavouriteGame) = runBlocking {
         CoroutineScope(Dispatchers.IO).launch {
             db.gamesDao().deleteFavouriteGame(favGame)
         }.join()
+
     }
 
-    fun getOnHypeGames() : HypeGameList {
-        var gamesItems = listOf<HypeGameItem>()
+    fun getOnHypeGames(): ArrayList<HypeGameItem> = runBlocking(Dispatchers.Default){
+
+        var gamesItems = ArrayList<HypeGameItem>()
             "https://api.igdb.com/v4/games".httpPost()
                 .header(
                     "Client-ID" to CLIENT_ID,
@@ -94,13 +102,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }.join()
-        return gamesItems as HypeGameList
-    }
+            return@runBlocking gamesItems
+        }
+
 
     fun loadData() {
-        viewModelScope.launch {
-            mutableIsDataLoading.value = true
-            delay(300)
+        viewModelScope.launch(Dispatchers.IO) {
+            mutableIsDataLoading.postValue(true)
             "https://api.igdb.com/v4/games".httpPost()
                 .header(
                     "Client-ID" to CLIENT_ID,
@@ -121,7 +129,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-            mutableIsDataLoading.value = false
+            mutableIsDataLoading.postValue(false)
         }
     }
 

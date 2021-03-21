@@ -81,7 +81,7 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener,
                 position: Int,
             ) {
                 val smoothScroller: LinearSmoothScroller =
-                    object : LinearSmoothScroller(context) {
+                    object : LinearSmoothScroller(activity.applicationContext) {
                         private val SPEED = 100f
                         override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
                             return SPEED / displayMetrics.densityDpi
@@ -91,8 +91,10 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener,
                 startSmoothScroll(smoothScroller)
             }
         }
+
         binding.recyclerViewOnHype.layoutManager = autoScrollLayoutManager
-        val onHypeGamesAdapter = OnHypeGamesAdapter(this, viewModel.getOnHypeGames(), requireContext())
+        val onHypeGamesAdapter =
+            OnHypeGamesAdapter(this, viewModel.getOnHypeGames(), requireContext())
         binding.recyclerViewOnHype.adapter = onHypeGamesAdapter
 
         position = Int.MAX_VALUE / 2
@@ -166,5 +168,4 @@ class TopFragment : Fragment(), GamesAdapter.OnCoverClickListener,
         gameType = GameType.HYPE_GAME
         view?.findNavController()?.navigate(R.id.action_topFragment_to_detailFragment)
     }
-
 }

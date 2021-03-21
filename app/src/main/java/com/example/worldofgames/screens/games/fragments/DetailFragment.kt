@@ -54,10 +54,11 @@ class DetailFragment : Fragment(), VideoAdapter.OnPlayClickListener {
 
         GlobalScope.launch(Dispatchers.Main) {
             val game = async(Dispatchers.IO) {
-                if (gameType == GameType.SIMPLE_GAME)
-                    viewModel.getGameById(gameId)
-                else
-                    viewModel.getHypeGameById(gameId)
+                when (gameType) {
+                    0 -> viewModel.getGameById(gameId)
+                    1 -> viewModel.getHypeGameById(gameId)
+                    else -> viewModel.getFavouriteGameById(gameId)
+                }
             }
 
             setViews(game, binding)
@@ -86,7 +87,7 @@ class DetailFragment : Fragment(), VideoAdapter.OnPlayClickListener {
     }
 
     private fun setFavourite() {
-        favouriteGame = viewModel.getFavouriteGameById(gameId)
+        favouriteGame = viewModel.getFavouriteGame(gameId)
         if (favouriteGame == null) {
             button.text = getString(R.string.add_to_favourite)
         } else {
@@ -96,7 +97,7 @@ class DetailFragment : Fragment(), VideoAdapter.OnPlayClickListener {
 
     private suspend fun setViews(game: Deferred<GameItem>, binding: FragmentDetailBinding) {
 
-        while (!game.isCompleted){
+        while (!game.isCompleted) {
             binding.progressBarLoading.visibility = View.VISIBLE
         }
         val gameItem = game.await()
@@ -106,6 +107,7 @@ class DetailFragment : Fragment(), VideoAdapter.OnPlayClickListener {
         binding.textViewLabelGenres.visibility = View.VISIBLE
         binding.textViewLabelReleaseDate.visibility = View.VISIBLE
         binding.progressBarLoading.visibility = View.GONE
+
         Picasso.get().load("https://images.igdb.com/igdb/image/upload/t_cover_big_2x/" +
                 gameItem.cover.imageId + ".jpg").into(binding.imageViewBigCover)
         binding.progressBarRatingRing.progress = gameItem.rating.roundToInt()
